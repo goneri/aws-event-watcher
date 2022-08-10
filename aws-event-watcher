@@ -81,12 +81,13 @@ class EventBridgeRule:
         self.arn = response["RuleArn"]
 
     def set_target(self, queue_arn):
+        target_id=f"{queue_arn.split(':')[-1]}-target"
         response = boto3.client("events").put_targets(
             Rule=self.name,
             EventBusName=self.bus_name,
             Targets=[
                 {
-                    "Id": "Goneri-put-targets",
+                    "Id": target_id,
                     "Arn": queue_arn,
                     "SqsParameters": {"MessageGroupId": ""},
                 }
