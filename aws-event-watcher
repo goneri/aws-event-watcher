@@ -11,6 +11,7 @@ import uuid
 
 my_bus = "default"
 
+
 class Queue:
     def __init__(self, name):
         self.name = name
@@ -53,18 +54,17 @@ class Queue:
             if "Messages" not in response:
                 time.sleep(1)
                 continue
-            
+
             for m in response["Messages"]:
                 yield m
                 boto3.client("sqs").delete_message(
                     QueueUrl=sqs_queue.url, ReceiptHandle=m["ReceiptHandle"]
                 )
 
-        
     def delete(self):
         boto3.client("sqs").delete_queue(
             QueueUrl=self.url,
-            )
+        )
 
 
 class EventBridgeRule:
@@ -81,7 +81,7 @@ class EventBridgeRule:
         self.arn = response["RuleArn"]
 
     def set_target(self, queue_arn):
-        target_id=f"{queue_arn.split(':')[-1]}-target"
+        target_id = f"{queue_arn.split(':')[-1]}-target"
         response = boto3.client("events").put_targets(
             Rule=self.name,
             EventBusName=self.bus_name,
@@ -93,17 +93,21 @@ class EventBridgeRule:
                 }
             ],
         )
+
     def delete(self):
-        response = boto3.client("events").delete_event_bus(
-            Name=self.name
-        )
+        response = boto3.client("events").delete_event_bus(Name=self.name)
+
 
 to_clean_up = []
+
+
 def graceful_exit(*_):
     signal.signal(signal.SIGINT, signal.SIG_IGN)
     for i in reversed(to_clean_up):
         i.delete()
     sys.exit(0)
+
+
 signal.signal(signal.SIGINT, graceful_exit)
 
 
