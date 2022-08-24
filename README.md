@@ -8,6 +8,10 @@ Add parameters to be able to:
 - select a different bus
 - use different criterias for the filter
 
+# See also
+
+- https://github.com/spezam/eventbridge-cli
+
 ## License
 
 GPLv3+
