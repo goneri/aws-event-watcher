@@ -122,6 +122,7 @@ sqs_queue.allow_events_from_rule(rule.arn)
 rule.set_target(sqs_queue.arn)
 
 for message in sqs_queue.get_message():
+    message["Body"] = json.loads(message["Body"])
     pprint(message)
 
 graceful_exit()
